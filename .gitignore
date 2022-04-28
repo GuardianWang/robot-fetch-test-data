@@ -1,4 +1,4 @@
 .idea
-*/*.egg-info
+*.egg-info/*
 depth.png
 point-cloud.pcd
