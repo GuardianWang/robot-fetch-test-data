@@ -1,6 +1,8 @@
 from ai2thor.controller import Controller
 from ai2thor.platform import CloudRendering
 from time import time
+import numpngw
+import numpy as np
 
 
 controller = Controller(platform=CloudRendering)
@@ -8,9 +10,9 @@ controller = Controller(platform=CloudRendering)
 print("controller initialized")
 
 renderDepthImage = True
-renderInstanceSegmentation = True
-renderSemanticSegmentation = True
-renderNormalsImage = True
+renderInstanceSegmentation = False
+renderSemanticSegmentation = False
+renderNormalsImage = False
 
 controller.reset(
     # makes the images a bit higher quality
@@ -41,6 +43,8 @@ controller.step(
     orthographicSize=3.25,
     skyboxColor="white"
 )
+
+numpngw.write_png('depth.png', (1000 * controller.last_event.depth_frame).astype(np.uint16))
 
 n_step = 10
 start_time = time()
