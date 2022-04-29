@@ -16,3 +16,10 @@ sudo apt-get install libvulkan1
 If you are using Ubuntu 16.04, visualization may have some bugs, 
 you can install a previous version or compile from source ([issue](https://github.com/isl-org/Open3D/issues/1307)).
 Or you can also download a pre-built whl from [here](https://gist.github.com/district10/c9d3e2a353b3435a5545b80bf7aba746).
+
+## Visualization
+
+### rgb
+![rgb](sample-image/image.jpg)
+### world coordinate point cloud and bounding boxes
+![world coordinate point cloud](sample-image/pcd.png)
