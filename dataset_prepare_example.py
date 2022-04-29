@@ -86,6 +86,40 @@ def get_point_cloud(controller):
     return pcd
 
 
+def viz_axis_aligned_bbox(aabboxes_o3d):
+    o3d.visualization.draw_geometries(aabboxes_o3d, lookat=[0, 0, -1], up=[0, 1, 0], front=[0, 0, 1], zoom=1)
+
+
+def get_visible_axis_aligned_bbox(controller):
+    objects = controller.last_event.metadata['objects']
+    viz_objs = [x for x in objects if x['visible']]
+    aabboxes = [x['axisAlignedBoundingBox'] for x in viz_objs]
+    aabboxes_o3d = [create_bbox_from_points(x['cornerPoints']) for x in aabboxes]
+
+    return aabboxes_o3d
+
+
+def create_bbox_from_points(points):
+    # points: [8, 3]
+    # 0 1
+    # 2 3
+    # 4 5
+    # 6 7
+    points = np.asarray(points)
+    # reverse z in o3d coordinates
+    points[:, 2] *= -1
+    lines = [[0, 1], [1, 3], [2, 3], [0, 2],
+             [4, 5], [5, 7], [6, 7], [4, 6],
+             [0, 4], [1, 5], [2, 6], [3, 7]]
+    colors = [[1, 0, 0] for _ in range(len(lines))]
+    line_set = o3d.geometry.LineSet()
+    line_set.points = o3d.utility.Vector3dVector(np.asarray(points))
+    line_set.lines = o3d.utility.Vector2iVector(lines)
+    line_set.colors = o3d.utility.Vector3dVector(colors)
+
+    return line_set
+
+
 if __name__ == '__main__':
     ctrl = init_controller()
     controller_step(ctrl)
