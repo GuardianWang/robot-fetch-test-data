@@ -63,14 +63,14 @@ event = controller.step(
 
 camera_rgb = event.third_party_camera_frames[-1][..., :3]
 camera_depth = event.third_party_depth_frames[-1]
-cv2.imwrite("image.jpg", cv2.cvtColor(camera_rgb, cv2.COLOR_RGB2BGR))
-numpngw.write_png('depth.png', (1000 * camera_depth).astype(np.uint16))
+# cv2.imwrite("image.jpg", cv2.cvtColor(camera_rgb, cv2.COLOR_RGB2BGR))
+# numpngw.write_png('depth.png', (1000 * camera_depth).astype(np.uint16))
 # plt.imshow(camera_rgb)
 # plt.show()
 
 controller.step(action='LookUp', degrees=10)
-# cv2.imwrite("image.jpg", controller.last_event.cv2img)
-# numpngw.write_png('depth.png', (1000 * controller.last_event.depth_frame).astype(np.uint16))
+cv2.imwrite("image.jpg", controller.last_event.cv2img)
+numpngw.write_png('depth.png', (1000 * controller.last_event.depth_frame).astype(np.uint16))
 
 n_step = 0
 start_time = time()

@@ -15,14 +15,14 @@ intrinsic = o3d.camera.PinholeCameraIntrinsic(width, height, fx, fy, cx, cy)
 
 # first element is math.radians(cameraHorizon)
 # second element is radians(-agent_rotation_y)
-rot_euler = np.array([math.radians(45), math.radians(-90), 0])
+rot_euler = np.array([math.radians(-10), math.radians(-90), 0])
 # looking at the outward axis, positive angle is rotating counterclockwise
 # but in ai2thor, looking at the outward axis, positive angle is rotating clockwise
 rot_mat = o3d.geometry.get_rotation_matrix_from_xyz(rot_euler)
 # cameraPosition
 # camera to world
 # use x, y, -z
-trans_vec = np.array([0, 1, 0]).astype(np.float32)
+trans_vec = np.array([0, 0.9, 1.25]).astype(np.float32)
 extrinsic = np.eye(4).astype(np.float32)
 extrinsic[:3, :3] = rot_mat
 # extrinsic[:3, 3] = trans_vec
