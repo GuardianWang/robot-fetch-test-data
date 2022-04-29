@@ -23,3 +23,11 @@ Or you can also download a pre-built whl from [here](https://gist.github.com/dis
 ![rgb](sample-image/image.jpg)
 ### world coordinate point cloud and bounding boxes
 ![world coordinate point cloud](sample-image/pcd.png)
+
+## TODO
+
+- [ ] query 2d bbox
+- [ ] read votenet Dataset and see 3d bbox coordinate, camera or world
+- [ ] know what bbox orientation means
+- [ ] AI-Habitat
+- [ ] Modify Dataset config of votenet
