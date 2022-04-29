@@ -1,0 +1,13 @@
+ai2thor==4.2.0
+matplotlib==3.5.1
+numpngw==0.1.0
+numpy==1.22.3
+open3d==0.14.1+a95136a2f
+opencv_python==4.5.5.64
+plyfile==0.7.4
+scipy==1.8.0
+setuptools==61.2.0
+tensorboardX==2.5
+torch==1.4.0
+tqdm==4.64.0
+trimesh==2.35.39
