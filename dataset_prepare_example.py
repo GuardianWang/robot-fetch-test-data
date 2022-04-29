@@ -63,9 +63,9 @@ def get_point_cloud(controller):
     rot_euler = np.array([math.radians(agent['cameraHorizon']), math.radians(-agent['rotation']['y']), 0])
     # looking at the outward axis, positive angle is rotating counterclockwise
     rot_mat = o3d.geometry.get_rotation_matrix_from_xyz(rot_euler)
-    position = agent['position']
-    position = [position['x'], position['y'], -position['z']]
-    trans_vec = np.array(position).astype(np.float32)
+    camera_position = metadata['cameraPosition']
+    camera_position = [camera_position['x'], camera_position['y'], -camera_position['z']]
+    trans_vec = np.array(camera_position).astype(np.float32)
     extrinsic = np.eye(4).astype(np.float32)
     extrinsic[:3, :3] = rot_mat
 
