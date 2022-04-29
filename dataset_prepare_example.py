@@ -126,13 +126,13 @@ def create_bbox_from_points(points):
     lines = [[0, 1], [1, 3], [2, 3], [0, 2],
              [4, 5], [5, 7], [6, 7], [4, 6],
              [0, 4], [1, 5], [2, 6], [3, 7]]
-    colors = [[1, 0, 0] for _ in range(len(lines))]
     line_set = o3d.geometry.LineSet()
     line_set.points = o3d.utility.Vector3dVector(np.asarray(points))
     line_set.lines = o3d.utility.Vector2iVector(lines)
-    line_set.colors = o3d.utility.Vector3dVector(colors)
+    aabbox = line_set.get_axis_aligned_bounding_box()
+    aabbox.color = np.array([1, 0, 0])
 
-    return line_set
+    return aabbox
 
 
 if __name__ == '__main__':
