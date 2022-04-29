@@ -1,5 +1,5 @@
 .idea
 *.egg-info/*
-./depth.png
+/depth.png
 point-cloud.pcd
-./image.jpg
+/image.jpg
