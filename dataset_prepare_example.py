@@ -33,9 +33,11 @@ def save_depth(controller):
 
 def get_data(controller):
     pcd = get_point_cloud(controller)
+    aabboxes_o3d = get_visible_axis_aligned_bbox(controller)
 
     return {
-        'point_cloud': pcd
+        'point_cloud': pcd,
+        'aabboxes': aabboxes_o3d,
     }
 
 
