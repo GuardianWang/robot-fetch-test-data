@@ -72,7 +72,12 @@ controller.step(action='LookUp', degrees=10)
 cv2.imwrite("image.jpg", controller.last_event.cv2img)
 numpngw.write_png('depth.png', (1000 * controller.last_event.depth_frame).astype(np.uint16))
 
-n_step = 10
+objects = controller.last_event.metadata['objects']
+viz_objs = [x for x in objects if x['visible']]
+aabboxes = [x['axisAlignedBoundingBox'] for x in viz_objs]
+oobboxes = [x['objectOrientedBoundingBox'] for x in viz_objs]
+
+n_step = 0
 start_time = time()
 for _ in range(n_step):
     event = controller.step("MoveAhead")
