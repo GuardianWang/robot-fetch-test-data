@@ -55,4 +55,10 @@ pcd.translate(trans_vec)
 # z is outward in open3d
 mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
 o3d.io.write_point_cloud("point-cloud.pcd", pcd, write_ascii=True, print_progress=True)
-o3d.visualization.draw_geometries([pcd, mesh_frame], lookat=[0, 0, -1], up=[0, 1, 0], front=[0, 0, 1], zoom=1)
+
+min_bound = np.array([0, 0, 0])
+max_bound = np.array([1, 1, 1])
+bbox = o3d.geometry.AxisAlignedBoundingBox(min_bound=min_bound, max_bound=max_bound)
+bbox.color = np.array([1, 0, 0])
+
+o3d.visualization.draw_geometries([pcd, mesh_frame, bbox], lookat=[0, 0, -1], up=[0, 1, 0], front=[0, 0, 1], zoom=1)
