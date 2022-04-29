@@ -5,6 +5,24 @@ import numpngw
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import open3d as o3d
+
+
+def create_bbox_from_points(points):
+    # points: [8, 3]
+    points = np.asarray(points)
+    # reverse z in o3d coordinates
+    points[:, 2] *= -1
+    lines = [[0, 1], [1, 3], [2, 3], [0, 2],
+             [4, 5], [5, 7], [6, 7], [4, 6],
+             [0, 4], [1, 5], [2, 6], [3, 7]]
+    colors = [[1, 0, 0] for _ in range(len(lines))]
+    line_set = o3d.geometry.LineSet()
+    line_set.points = o3d.utility.Vector3dVector(np.asarray(points))
+    line_set.lines = o3d.utility.Vector2iVector(lines)
+    line_set.colors = o3d.utility.Vector3dVector(colors)
+
+    return line_set
 
 
 # fieldOfView controls the fov on y axis
@@ -77,9 +95,15 @@ viz_objs = [x for x in objects if x['visible']]
 aabboxes = [x['axisAlignedBoundingBox'] for x in viz_objs]
 oobboxes = [x['objectOrientedBoundingBox'] for x in viz_objs]
 
+
 n_step = 0
 start_time = time()
 for _ in range(n_step):
     event = controller.step("MoveAhead")
 end_time = time()
 print(f"{n_step/(end_time - start_time)} fps")
+
+aabboxes_o3d = [create_bbox_from_points(x['cornerPoints']) for x in aabboxes]
+mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
+o3d.visualization.draw_geometries([mesh_frame, *aabboxes_o3d], lookat=[0, 0, -1], up=[0, 1, 0], front=[0, 0, 1], zoom=1)
+
