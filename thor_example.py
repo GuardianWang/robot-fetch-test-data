@@ -7,22 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import open3d as o3d
 
-
-def create_bbox_from_points(points):
-    # points: [8, 3]
-    points = np.asarray(points)
-    # reverse z in o3d coordinates
-    points[:, 2] *= -1
-    lines = [[0, 1], [1, 3], [2, 3], [0, 2],
-             [4, 5], [5, 7], [6, 7], [4, 6],
-             [0, 4], [1, 5], [2, 6], [3, 7]]
-    colors = [[1, 0, 0] for _ in range(len(lines))]
-    line_set = o3d.geometry.LineSet()
-    line_set.points = o3d.utility.Vector3dVector(np.asarray(points))
-    line_set.lines = o3d.utility.Vector2iVector(lines)
-    line_set.colors = o3d.utility.Vector3dVector(colors)
-
-    return line_set
+from dataset_prepare_example import create_bbox_from_points
 
 
 # fieldOfView controls the fov on y axis
