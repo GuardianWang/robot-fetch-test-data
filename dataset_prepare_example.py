@@ -142,4 +142,6 @@ if __name__ == '__main__':
     save_depth(ctrl)
 
     data = get_data(ctrl)
-    viz_point_cloud(data['point_cloud'])
+    viz_data(data)
+    # viz_point_cloud(data['point_cloud'])
+    # viz_axis_aligned_bbox(data['aabboxes'])
