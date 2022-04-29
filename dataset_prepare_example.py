@@ -39,6 +39,19 @@ def get_data(controller):
     }
 
 
+def viz_data(data, draw_axis=True):
+    to_viz = []
+    if draw_axis:
+        mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
+        to_viz = [mesh_frame]
+    for v in data.values():
+        if isinstance(v, list):
+            to_viz.extend(v)
+        else:
+            to_viz.append(v)
+    o3d.visualization.draw_geometries(to_viz, lookat=[0, 0, -1], up=[0, 1, 0], front=[0, 0, 1], zoom=1)
+
+
 def viz_point_cloud(pcd):
     mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
     o3d.visualization.draw_geometries([pcd, mesh_frame], lookat=[0, 0, -1], up=[0, 1, 0], front=[0, 0, 1], zoom=1)
