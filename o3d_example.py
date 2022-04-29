@@ -33,4 +33,8 @@ pcd = pcd.create_from_rgbd_image(
 # pcd.points = o3d.utility.Vector3dVector(np_pcd)
 
 o3d.io.write_point_cloud("point-cloud.pcd", pcd, write_ascii=True, print_progress=True)
+pcd.transform([[1, 0, 0, 0],
+               [0, -1, 0, 0],
+               [0, 0, -1, 0],
+               [0, 0, 0, 1]])
 o3d.visualization.draw_geometries([pcd])
