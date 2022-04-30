@@ -31,3 +31,5 @@ Or you can also download a pre-built whl from [here](https://gist.github.com/dis
 - [ ] know what bbox orientation means
 - [ ] AI-Habitat
 - [ ] Modify Dataset config of votenet
+- [ ] SLAM and make the whole scene
+- [ ] what is required from SPOT
