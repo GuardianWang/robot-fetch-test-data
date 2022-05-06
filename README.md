@@ -25,6 +25,8 @@ Or you can also download a pre-built whl from [here](https://gist.github.com/dis
 ![world coordinate point cloud](sample-image/pcd.png)
 ### sunrgbd 2d bbox, left: dataset label, right: CNN detector label
 ![](sample-image/sunrgbd-2dbbox.jpg)
+### sunrgbd point cloud
+![](sample-image/sunrgbd-pcd.png)
 
 ## TODO
 
