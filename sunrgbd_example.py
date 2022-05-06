@@ -1,6 +1,7 @@
 import open3d as o3d
 import numpy as np
 import cv2
+import math
 from scipy.io import loadmat
 import os
 from os.path import join
@@ -46,7 +47,12 @@ def viz_3d_bbox():
     bboxes_3d = np.load(bbox_3d_path)
     o3d_bboxes = []
     for bbox_3d in bboxes_3d:
-        o3d_bbox = o3d.geometry.OrientedBoundingBox(center=bbox_3d[:3], R=np.eye(3), extent=2 * bbox_3d[3:6])
+        # https://github.com/isl-org/Open3D/issues/2
+        # text viz
+        # rotation is from x to -y
+        rot_euler = np.array([0, 0, math.radians(-bbox_3d[6])])
+        rot_mat = o3d.geometry.get_rotation_matrix_from_xyz(rot_euler)
+        o3d_bbox = o3d.geometry.OrientedBoundingBox(center=bbox_3d[:3], R=rot_mat, extent=2 * bbox_3d[3:6])
         o3d_bboxes.append(o3d_bbox)
     mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
     o3d.visualization.draw_geometries([pcd, mesh_frame, *o3d_bboxes], lookat=[0, 0, -1], up=[0, 1, 0], front=[0, 0, 1], zoom=1)
