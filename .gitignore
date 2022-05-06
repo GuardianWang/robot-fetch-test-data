@@ -1,6 +1,7 @@
 .idea
 *.egg-info/*
 /depth.png
+/sunrgbd-2dbbox.jpg
 point-cloud.pcd
 /image.jpg
 /Makefile
