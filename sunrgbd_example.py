@@ -32,6 +32,8 @@ def viz_point_cloud():
 def viz_2d_bbox():
     prob_thr = 0.1
     label_bboxes = np.loadtxt(label_path, usecols=tuple(range(1, 13)), dtype='f4')
+    label_bboxes[:, [0, 2]] = np.sort(label_bboxes[:, [0, 2]])
+    label_bboxes[:, [1, 3]] = np.sort(label_bboxes[:, [1, 3]])
     label_names = np.loadtxt(label_path, usecols=0, dtype='S')
     # 2d bboxes are inaccurate so that authors used other detectors
     # although the detector results are not too accurate either
@@ -50,13 +52,19 @@ def viz_2d_bbox():
         "2dbboxes": label_bboxes_2d,
     }
 
-    rgb = cv2.imread(rgb_path, cv2.IMREAD_COLOR)
-    # cv2, upper left is (0, 0)
-    for name, (x1, y1, x2, y2) in zip(labels_bboxes_2d["classes"], labels_bboxes_2d["2dbboxes"].astype('i4')):
-        cv2.putText(rgb, name, (x1, y2), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-        cv2.rectangle(rgb, (x1, y1), (x2, y2), (255, 0, 0))
-        cv2.imshow("image", rgb)
-        cv2.waitKey()
+    rgbs = []
+    for label_src in (labels, labels_bboxes_2d):
+        rgb = cv2.imread(rgb_path, cv2.IMREAD_COLOR)
+        # cv2, upper left is (0, 0)
+        for name, (x1, y1, x2, y2) in zip(label_src["classes"], label_src["2dbboxes"].astype('i4')):
+            cv2.putText(rgb, name, (x1, y2), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
+            cv2.rectangle(rgb, (x1, y1), (x2, y2), (255, 0, 0))
+        rgbs.append(rgb)
+
+    rgb = np.column_stack(rgbs)
+    cv2.imwrite("sunrgbd-2dbbox.jpg", rgb)
+    cv2.imshow("image", rgb)
+    cv2.waitKey()
 
 
 if __name__ == "__main__":
