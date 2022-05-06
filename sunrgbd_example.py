@@ -14,9 +14,15 @@ depth_path = join(dataset_path, "sunrgbd_pc_bbox_votes_50k_v1_val/{:06d}_pc.npz"
 calib_path = join(dataset_path, "sunrgbd_trainval/calib/{:06d}.txt".format(sample_id))
 label_path = join(dataset_path, "sunrgbd_trainval/label/{:06d}.txt".format(sample_id))
 bbox_2d_path = join(dataset_path, "sunrgbd_2d_bbox_50k_v1_val/{:06d}.txt".format(sample_id))
+bbox_3d_path = join(dataset_path, "sunrgbd_pc_bbox_votes_50k_v1_val/{:06d}_bbox.npy".format(sample_id))
+
+# sunrgbd_utils.py
+type2class = {'bed': 0, 'table': 1, 'sofa': 2, 'chair': 3, 'toilet': 4, 'desk': 5, 'dresser': 6, 'night_stand': 7,
+              'bookshelf': 8, 'bathtub': 9}
+class2type = {type2class[t]: t for t in type2class}
 
 
-def viz_point_cloud():
+def get_pcd():
     # point cloud from path
     depth_mat = np.load(depth_path)['pc']
     points = depth_mat[:, :3]
@@ -26,8 +32,24 @@ def viz_point_cloud():
     pcd.points = o3d.utility.Vector3dVector(points)
     pcd.colors = o3d.utility.Vector3dVector(colors)
 
+    return pcd
+
+
+def viz_point_cloud():
+    pcd = get_pcd()
     mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
     o3d.visualization.draw_geometries([pcd, mesh_frame], lookat=[0, 0, -1], up=[0, 1, 0], front=[0, 0, 1], zoom=1)
+
+
+def viz_3d_bbox():
+    pcd = get_pcd()
+    bboxes_3d = np.load(bbox_3d_path)
+    o3d_bboxes = []
+    for bbox_3d in bboxes_3d:
+        o3d_bbox = o3d.geometry.OrientedBoundingBox(center=bbox_3d[:3], R=np.eye(3), extent=2 * bbox_3d[3:6])
+        o3d_bboxes.append(o3d_bbox)
+    mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
+    o3d.visualization.draw_geometries([pcd, mesh_frame, *o3d_bboxes], lookat=[0, 0, -1], up=[0, 1, 0], front=[0, 0, 1], zoom=1)
 
 
 def viz_2d_bbox():
@@ -70,5 +92,6 @@ def viz_2d_bbox():
 
 if __name__ == "__main__":
     # viz_point_cloud()
-    viz_2d_bbox()
+    # viz_2d_bbox()
+    viz_3d_bbox()
     pass
