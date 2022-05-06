@@ -32,12 +32,12 @@ def viz_point_cloud():
 
 def viz_2d_bbox():
     prob_thr = 0.1
+    # sungrbd_utils.py SUNObject3d
     label_bboxes = np.loadtxt(label_path, usecols=tuple(range(1, 13)), dtype='f4')
-    label_bboxes[:, [0, 2]] = np.sort(label_bboxes[:, [0, 2]])
-    label_bboxes[:, [1, 3]] = np.sort(label_bboxes[:, [1, 3]])
+    label_bboxes[:, [2, 3]] += label_bboxes[:, [0, 1]]
     label_names = np.loadtxt(label_path, usecols=0, dtype='S')
-    # 2d bboxes are inaccurate so that authors used other detectors
-    # although the detector results are not too accurate either
+    # authors used other detectors for imvotenet
+    # although the detector results are not too accurate
     label_bboxes_2d = np.loadtxt(bbox_2d_path, usecols=tuple(range(4, 9)), dtype='f4')
     probs = label_bboxes_2d[:, -1]
     label_bboxes_2d_names = np.loadtxt(bbox_2d_path, usecols=0, dtype='S')
