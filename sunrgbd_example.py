@@ -6,11 +6,13 @@ import os
 from os.path import join
 
 
-dataset_path = r"imvotenet/sunrgbd-toy"
-rgb_path = join(dataset_path, "sunrgbd_trainval/image/000001.jpg")
-depth_path = join(dataset_path, "sunrgbd_trainval/depth/000001.mat")
-calib_path = join(dataset_path, "sunrgbd_trainval/calib/000001.txt")
-label_path = join(dataset_path, "sunrgbd_trainval/label/000001.txt")
+dataset_path = r"imvotenet/sunrgbd"
+sample_id = 1
+rgb_path = join(dataset_path, "sunrgbd_trainval/image/{:06d}.jpg".format(sample_id))
+depth_path = join(dataset_path, "sunrgbd_trainval/depth/{:06d}.mat".format(sample_id))
+calib_path = join(dataset_path, "sunrgbd_trainval/calib/{:06d}.txt".format(sample_id))
+label_path = join(dataset_path, "sunrgbd_trainval/label/{:06d}.txt".format(sample_id))
+bbox_2d_path = join(dataset_path, "sunrgbd_2d_bbox_50k_v1_val/{:06d}.txt".format(sample_id))
 
 
 def viz_point_cloud():
@@ -27,6 +29,37 @@ def viz_point_cloud():
     o3d.visualization.draw_geometries([pcd, mesh_frame], lookat=[0, 0, -1], up=[0, 1, 0], front=[0, 0, 1], zoom=1)
 
 
+def viz_2d_bbox():
+    prob_thr = 0.1
+    label_bboxes = np.loadtxt(label_path, usecols=tuple(range(1, 13)), dtype='f4')
+    label_names = np.loadtxt(label_path, usecols=0, dtype='S')
+    # 2d bboxes are inaccurate so that authors used other detectors
+    # although the detector results are not too accurate either
+    label_bboxes_2d = np.loadtxt(bbox_2d_path, usecols=tuple(range(4, 9)), dtype='f4')
+    probs = label_bboxes_2d[:, -1]
+    label_bboxes_2d_names = np.loadtxt(bbox_2d_path, usecols=0, dtype='S')
+    label_bboxes_2d_names = label_bboxes_2d_names[probs > prob_thr]
+    label_bboxes_2d = label_bboxes_2d[probs > prob_thr][:, :4]
+    labels = {
+        "classes": label_names.astype(str),
+        "2dbboxes": label_bboxes[:, :4],
+        "3dbboxes": label_bboxes[:, 4:],
+    }
+    labels_bboxes_2d = {
+        "classes": label_bboxes_2d_names.astype(str),
+        "2dbboxes": label_bboxes_2d,
+    }
+
+    rgb = cv2.imread(rgb_path, cv2.IMREAD_COLOR)
+    # cv2, upper left is (0, 0)
+    for name, (x1, y1, x2, y2) in zip(labels_bboxes_2d["classes"], labels_bboxes_2d["2dbboxes"].astype('i4')):
+        cv2.putText(rgb, name, (x1, y2), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+        cv2.rectangle(rgb, (x1, y1), (x2, y2), (255, 0, 0))
+        cv2.imshow("image", rgb)
+        cv2.waitKey()
+
+
 if __name__ == "__main__":
     # viz_point_cloud()
+    viz_2d_bbox()
     pass
