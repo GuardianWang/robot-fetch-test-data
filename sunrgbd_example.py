@@ -16,6 +16,7 @@ calib_path = join(dataset_path, "sunrgbd_trainval/calib/{:06d}.txt".format(sampl
 label_path = join(dataset_path, "sunrgbd_trainval/label/{:06d}.txt".format(sample_id))
 bbox_2d_path = join(dataset_path, "sunrgbd_2d_bbox_50k_v1_val/{:06d}.txt".format(sample_id))
 bbox_3d_path = join(dataset_path, "sunrgbd_pc_bbox_votes_50k_v1_val/{:06d}_bbox.npy".format(sample_id))
+votes_path = join(dataset_path, "sunrgbd_pc_bbox_votes_50k_v1_val/{:06d}_votes.npz".format(sample_id))
 
 # sunrgbd_utils.py
 type2class = {'bed': 0, 'table': 1, 'sofa': 2, 'chair': 3, 'toilet': 4, 'desk': 5, 'dresser': 6, 'night_stand': 7,
@@ -36,14 +37,7 @@ def get_pcd():
     return pcd
 
 
-def viz_point_cloud():
-    pcd = get_pcd()
-    mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
-    o3d.visualization.draw_geometries([pcd, mesh_frame], lookat=[0, 0, -1], up=[0, 1, 0], front=[0, 0, 1], zoom=1)
-
-
-def viz_3d_bbox():
-    pcd = get_pcd()
+def get_3d_bbox():
     bboxes_3d = np.load(bbox_3d_path)
     o3d_bboxes = []
     for bbox_3d in bboxes_3d:
@@ -54,6 +48,43 @@ def viz_3d_bbox():
         rot_mat = o3d.geometry.get_rotation_matrix_from_xyz(rot_euler)
         o3d_bbox = o3d.geometry.OrientedBoundingBox(center=bbox_3d[:3], R=rot_mat, extent=2 * bbox_3d[3:6])
         o3d_bboxes.append(o3d_bbox)
+
+    return o3d_bboxes
+
+
+def viz_point_cloud():
+    pcd = get_pcd()
+    mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
+    o3d.visualization.draw_geometries([pcd, mesh_frame], lookat=[0, 0, -1], up=[0, 1, 0], front=[0, 0, 1], zoom=1)
+
+
+def viz_votes():
+    NVOTES = 100
+    pcd = get_pcd()
+    votes = np.load(votes_path)['point_votes']
+    within_indices = np.arange(votes.shape[0])[votes[:, 0] == 1]
+    votes = votes[votes[:, 0] == 1]  # point within a bbox
+    indices = np.random.choice(votes.shape[0], NVOTES, False)
+    votes = votes[indices, 1:4]
+    from_pt = np.asarray(pcd.points)[within_indices[indices]]
+    to_pt = from_pt + votes
+    pts = np.row_stack((from_pt, to_pt))
+    lines = np.array([[x, x + from_pt.shape[0]] for x in range(from_pt.shape[0])])
+    colors = np.repeat([[1, 0, 0]], lines.shape[0], 0)
+    line_set = o3d.geometry.LineSet()
+    line_set.points = o3d.utility.Vector3dVector(pts)
+    line_set.lines = o3d.utility.Vector2iVector(lines)
+    line_set.colors = o3d.utility.Vector3dVector(colors)
+
+    # viz the first vote only
+    o3d_bboxes = get_3d_bbox()
+    mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
+    o3d.visualization.draw_geometries([pcd, mesh_frame, *o3d_bboxes, line_set], lookat=[0, 0, -1], up=[0, 1, 0], front=[0, 0, 1], zoom=1)
+
+
+def viz_3d_bbox():
+    pcd = get_pcd()
+    o3d_bboxes = get_3d_bbox()
     mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
     o3d.visualization.draw_geometries([pcd, mesh_frame, *o3d_bboxes], lookat=[0, 0, -1], up=[0, 1, 0], front=[0, 0, 1], zoom=1)
 
@@ -99,5 +130,6 @@ def viz_2d_bbox():
 if __name__ == "__main__":
     # viz_point_cloud()
     # viz_2d_bbox()
-    viz_3d_bbox()
+    # viz_3d_bbox()
+    viz_votes()
     pass
