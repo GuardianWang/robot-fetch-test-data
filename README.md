@@ -27,6 +27,8 @@ Or you can also download a pre-built whl from [here](https://gist.github.com/dis
 ![](sample-image/sunrgbd-2dbbox.jpg)
 ### sunrgbd point cloud, 3d bboxes, and voting
 ![](sample-image/sunrgbd-pcd.png)
+### sunrgbd prediction result, confident nms, night stand and bed
+![](sample-image/sunrgbd-confident-nms-.png)
 
 ## TODO
 
