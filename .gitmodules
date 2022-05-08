@@ -1,6 +1,3 @@
 [submodule "imvotenet"]
 	path = imvotenet
 	url = https://github.com/GuardianWang/imvotenet.git
-[submodule "pointnet2"]
-	path = pointnet2
-	url = https://github.com/GuardianWang/pointnet2.git
